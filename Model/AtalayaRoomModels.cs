@@ -10,7 +10,7 @@ namespace WebAPITravelGateX.Model
     public class AtalayaRooms
     {
         [JsonPropertyName("rooms_type")]
-        public IEnumerable<AtalayaRoom> tipoHabitaciones { get; set; }
+        public IEnumerable<AtalayaRoom> RoomsType { get; set; }
     }
     public class AtalayaRoom
     {

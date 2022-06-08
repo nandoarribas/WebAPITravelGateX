@@ -28,9 +28,8 @@ namespace WebAPITravelGateX.Controllers
             _resortMethods = new ResortMethods();
         }
 
-
         [HttpGet("hotelInfo")]
-        public async Task<Hotels> GetHotelInfo()
+        public async Task<Hotels> GetFullHotelInfo()
         {
             var hotels = new List<Hotel>();
             var endpointAtalaya = _configuration.GetSection("APIS").GetSection("atalayaAPIHotelInfo").Value;
@@ -51,8 +50,8 @@ namespace WebAPITravelGateX.Controllers
             var hotelRoomInfo = new List<Hotel>();
             var endpointAtalaya = _configuration.GetSection("APIS").GetSection("atalayaAPIRoomInfo").Value;
 
-             hotelRoomInfo = await _atalayaMethods.RetrieveHotelRoomInfo(atalayaHotels, endpointAtalaya);
-            //TODO resort
+            hotelRoomInfo = await _atalayaMethods.RetrieveHotelRoomInfo(atalayaHotels, endpointAtalaya);
+            
             return hotelRoomInfo;
         }
 

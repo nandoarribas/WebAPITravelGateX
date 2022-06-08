@@ -12,13 +12,14 @@ namespace WebAPITravelGateX.Methods
         {
             var data = await Utils.GetDataFromUrl(endpoint);
 
-            foreach (var hotel in JsonSerializer.Deserialize<ResortHotel>(data).hotels)
+            foreach (var hotel in JsonSerializer.Deserialize<ResortHotels>(data).hotels)
             {
                 hotels.Add(new Hotel()
                 {
                     City = hotel.Location,
                     Code = hotel.Code,
-                    Name = hotel.Name
+                    Name = hotel.Name,
+                    Rooms = hotel.
                 });
             }
             return hotels;
