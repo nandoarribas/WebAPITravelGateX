@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
 using WebAPITravelGateX.Model;
@@ -19,10 +20,27 @@ namespace WebAPITravelGateX.Methods
                     City = hotel.Location,
                     Code = hotel.Code,
                     Name = hotel.Name,
-                    Rooms = hotel.
+                    Rooms = ParseRoomInfo(hotel.Rooms)
                 });
             }
             return hotels;
+        }
+
+        public async Task<List<Hotel>> RetrieveHotelMealInfo(List<Hotel> hotels, string endpoint)
+        {
+            return null;
+        }
+
+        private IEnumerable<HotelRoomInfo> ParseRoomInfo(IEnumerable<ResortHotelRoom> resortRooms)
+        {
+            var rooms = from room in resortRooms
+                        select new HotelRoomInfo()
+                        {
+                            Name = room.Name,
+                            RoomType = room.Code
+
+                        };
+            return rooms;
         }
     }
 }

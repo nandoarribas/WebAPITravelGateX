@@ -20,16 +20,19 @@ namespace WebAPITravelGateX.Model
         [JsonPropertyName("location")]
         public string Location { get; set; }
         [JsonPropertyName("rooms")]
-        public IEnumerable<ResortHotelRoom> rooms { get; set; }
+        public IEnumerable<ResortHotelRoom> Rooms { get; set; }
 
     }
 
+    /// <summary>
+    /// Notice that we have to swap the variable names because the name attribute refers to the code(Standard/Suite) and vice versa
+    /// </summary>
     public class ResortHotelRoom
     {
         [JsonConverter(typeof(JsonStringEnumConverter))]
-        [JsonPropertyName("code")]
-        public RoomType code { get; set; }
         [JsonPropertyName("name")]
-        public string name { get; set; }
+        public RoomType Code { get; set; }
+        [JsonPropertyName("code")]
+        public string Name { get; set; }
     }
 }
