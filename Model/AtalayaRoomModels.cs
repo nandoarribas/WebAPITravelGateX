@@ -19,7 +19,7 @@ namespace WebAPITravelGateX.Model
 
         [JsonPropertyName("code")]
         [JsonConverter(typeof(JsonStringEnumConverter))]
-        public Habitacion Code { get; set; }
+        public RoomType Code { get; set; }
 
         [JsonPropertyName("name")]
         public string Name { get; set; }

@@ -17,7 +17,7 @@ namespace WebAPITravelGateX.Model
     {
         [JsonPropertyName("code")]
         [JsonConverter(typeof(JsonStringEnumConverter))]
-        public Regimenes Code { get; set; }
+        public MealPlan Code { get; set; }
 
         [JsonPropertyName("name")]
         public string Name { get; set; }
@@ -27,7 +27,7 @@ namespace WebAPITravelGateX.Model
     }
     public class AtalayaMealPlanFare
     {
-        public Habitacion Room { get; set; }
+        public RoomType Room { get; set; }
         public decimal Price { get; set; }
     }
 }

@@ -4,7 +4,7 @@ using System.Runtime.Serialization;
 namespace WebAPITravelGateX.Util
 {
     [Flags]
-    public enum Regimenes
+    public enum MealPlan
     {
         sa,
         mp,
@@ -13,7 +13,7 @@ namespace WebAPITravelGateX.Util
     }
 
     [Flags]
-    public enum Habitacion
+    public enum RoomType
     {
         standard,
         suite

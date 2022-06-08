@@ -68,7 +68,7 @@ namespace WebAPITravelGateX.Methods
                         atalayaRoomPriceParsed.Add(new AtalayaMealPlanFare()
                         {
                             Price = precioHabitacionPorPersona.GetProperty("price").GetDecimal(),
-                            Room = (Habitacion)Enum.Parse(typeof(Habitacion),precioHabitacionPorPersona.GetProperty("room").GetString())
+                            Room = (RoomType)Enum.Parse(typeof(RoomType),precioHabitacionPorPersona.GetProperty("room").GetString())
                         });
                     }
 
@@ -87,7 +87,7 @@ namespace WebAPITravelGateX.Methods
             return hotelesSalida;
         }
 
-        private IEnumerable<HotelRoomInfo> FillTarifasHabitaciones(IEnumerable<HotelRoomInfo> rooms, IEnumerable<AtalayaMealPlanFare> tarifas, Regimenes mealplan )
+        private IEnumerable<HotelRoomInfo> FillTarifasHabitaciones(IEnumerable<HotelRoomInfo> rooms, IEnumerable<AtalayaMealPlanFare> tarifas, MealPlan mealplan )
         {
             var hotelRoomInfoResult = new List<HotelRoomInfo>();
             foreach (var roomInfo in rooms)

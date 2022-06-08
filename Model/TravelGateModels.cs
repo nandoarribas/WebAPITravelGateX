@@ -25,10 +25,10 @@ namespace WebAPITravelGateX.Model
         public string Name { get; set; }
 
         [JsonPropertyName("room_type")]
-        public Habitacion RoomType { get; set; }
+        public RoomType RoomType { get; set; }
 
         [JsonPropertyName("meal_plan")]
-        public Regimenes MealPlan { get; set; }
+        public MealPlan MealPlan { get; set; }
         public decimal Price { get; set; }
     }
 }
