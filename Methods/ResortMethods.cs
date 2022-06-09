@@ -28,7 +28,49 @@ namespace WebAPITravelGateX.Methods
 
         public async Task<List<Hotel>> RetrieveHotelMealInfo(List<Hotel> hotels, string endpoint)
         {
-            return null;
+            var data = await Utils.GetDataFromUrl(endpoint);
+            var hotelResult = new List<Hotel>();
+            var mealPlansList = JsonSerializer.Deserialize<ResortMealPlans>(data).MealPlans;
+            
+            foreach(var hotel in hotels)
+            {
+                hotel.Rooms = FillResortRooms(hotel.Rooms, from meal in mealPlansList where meal.HotelCode == hotel.Code select meal);
+            }
+            
+            return hotels;
+        }
+
+        private IEnumerable<HotelRoomInfo> FillResortRooms(IEnumerable<HotelRoomInfo> rooms, IEnumerable<ResortMealPlan> hotelMealPlan)
+        {
+            var roomInfo = new List<HotelRoomInfo>();
+            foreach(var room in rooms)
+            {
+                var roomsMealPlan = (from meal in hotelMealPlan where room.RoomType == ConvertRoomType(meal.RoomType) 
+                    select new HotelRoomInfo()
+                    {
+                        Name = room.Name,
+                        RoomType = room.RoomType,
+                        MealPlan= meal.Code,
+                        Price = meal.Price
+                    });
+                roomInfo.AddRange(roomsMealPlan);
+            }
+            return roomInfo;
+        }
+
+        private RoomType ConvertRoomType(ResortRoomType resortRoomType)
+        {
+            var roomType = RoomType.standard;
+            switch(resortRoomType)
+            {
+                case ResortRoomType.st:
+                    roomType= RoomType.standard;
+                    break;
+                case ResortRoomType.su:
+                    roomType= RoomType.suite;
+                    break;
+            }
+            return roomType;
         }
 
         private IEnumerable<HotelRoomInfo> ParseRoomInfo(IEnumerable<ResortHotelRoom> resortRooms)

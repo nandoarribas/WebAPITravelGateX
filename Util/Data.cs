@@ -18,4 +18,11 @@ namespace WebAPITravelGateX.Util
         standard,
         suite
     }
+
+    [Flags]
+    public enum ResortRoomType
+    {
+        st,
+        su
+    }
 }

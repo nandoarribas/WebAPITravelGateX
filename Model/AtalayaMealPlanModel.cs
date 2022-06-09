@@ -10,10 +10,10 @@ namespace WebAPITravelGateX.Model
     {
 
         [JsonPropertyName("meal_plans")]
-        public IEnumerable<AtalayaMealPlann> Meals { get; set; }
+        public IEnumerable<AtalayaMealPlan> Meals { get; set; }
     }
 
-    public class AtalayaMealPlann
+    public class AtalayaMealPlan
     {
         [JsonPropertyName("code")]
         [JsonConverter(typeof(JsonStringEnumConverter))]

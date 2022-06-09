@@ -75,6 +75,7 @@ namespace WebAPITravelGateX.Methods
             var client = new HttpClient();
             var data = await Utils.GetDataFromUrl(endpoint);
             var hotelsResult = new List<Hotel>();
+            var hotelRooms = new Dictionary<string, List<HotelRoomInfo>>();
             foreach (var roomsMeal in JsonSerializer.Deserialize<AtalayaMealPlans>(data).Meals)
             {
                 var mealPlan = roomsMeal.Code;
@@ -84,19 +85,34 @@ namespace WebAPITravelGateX.Methods
                     var hotelCode = hotel.Name;
                     var roomFares = hotel.Value.EnumerateArray().ToList();
                     List<AtalayaMealPlanFare> atalayaRoomFareParsed = CreateMealPlanFares(roomFares);
+                    var roomsInfoFilled = (from mpf in atalayaRoomFareParsed
+                    select new HotelRoomInfo()
+                    {
+                        MealPlan = mealPlan,
+                        Name = hotelCode,
+                        Price = mpf.Price,
+                        RoomType = mpf.Room
+                    }).ToList();
 
-                    var addHotels = from h in hotels
-                                    where hotelCode == h.Code
-                                    select new Hotel()
-                                    {
-                                        City = h.City,
-                                        Code = h.Code,
-                                        Name = h.Name,
-                                        Rooms = FillHotelRooms(h.Rooms, atalayaRoomFareParsed, mealPlan)
-                                    };
-                    hotelsResult.AddRange(addHotels);
+                    if(hotelRooms.ContainsKey(hotelCode))
+                    {
+                        hotelRooms[hotelCode].AddRange(roomsInfoFilled);
+                    }
+                    else
+                    {
+                        hotelRooms.Add(hotelCode, roomsInfoFilled); 
+                    }
                 }
             }
+            hotelsResult = (from h in hotels
+            select new Hotel()
+            {
+                City = h.City,
+                Code = h.Code,
+                Name = h.Name,
+                Rooms = hotelRooms[h.Code]
+            }).ToList();
+
             return hotelsResult;
         }
 

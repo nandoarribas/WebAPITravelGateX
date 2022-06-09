@@ -32,36 +32,40 @@ namespace WebAPITravelGateX.Controllers
         public async Task<Hotels> GetFullHotelInfo()
         {
             var hotels = new List<Hotel>();
+            var atalayaHotels = new List<Hotel>();
+            var resortHotels = new List<Hotel>();
             var endpointAtalaya = _configuration.GetSection("APIS").GetSection("atalayaAPIHotelInfo").Value;
 
-            hotels = await _atalayaMethods.RetrieveHotels(hotels, endpointAtalaya);
-            hotels = (List<Hotel>)await GetHotelRoomInfo(hotels);
-            hotels = (List<Hotel>)await GetHotelMealPlanInfo(hotels);
+            atalayaHotels = await _atalayaMethods.RetrieveHotels(atalayaHotels, endpointAtalaya);
+            atalayaHotels = (List<Hotel>)await GetHotelRoomInfo(atalayaHotels);
             var endpointResort = _configuration.GetSection("APIS").GetSection("resortAPIHotelRoomInfo").Value;
-            hotels = await _resortMethods.RetrieveHotels(hotels, endpointResort);
+            resortHotels = await _resortMethods.RetrieveHotels(resortHotels, endpointResort);
+            //Until we dont have hotels set we cant get mealplan
+            hotels = (List<Hotel>)await GetHotelMealPlanInfo(atalayaHotels, resortHotels);
             return new Hotels()
             {
                 hotels = hotels
             };
         }
 
-        public async Task<IEnumerable<Hotel>> GetHotelRoomInfo(List<Hotel> atalayaHotels)
+        private async Task<IEnumerable<Hotel>> GetHotelRoomInfo(List<Hotel> atalayaHotels)
         {
             var hotelRoomInfo = new List<Hotel>();
             var endpointAtalaya = _configuration.GetSection("APIS").GetSection("atalayaAPIRoomInfo").Value;
 
             hotelRoomInfo = await _atalayaMethods.RetrieveHotelRoomInfo(atalayaHotels, endpointAtalaya);
-            
             return hotelRoomInfo;
         }
 
-        public async Task<IEnumerable<Hotel>> GetHotelMealPlanInfo(List<Hotel> atalayaHotels)
+        private async Task<IEnumerable<Hotel>> GetHotelMealPlanInfo(List<Hotel> atalayaHotels, List<Hotel> resortHotels)
         {
-            var hotelRoomInfo = new List<Hotel>();
+            var hotels = new List<Hotel>();
             var endpointAtalaya = _configuration.GetSection("APIS").GetSection("atalayaAPIMealInfo").Value;
 
-            hotelRoomInfo = await _atalayaMethods.RetrieveHotelMealInfo(atalayaHotels, endpointAtalaya);
-            return hotelRoomInfo;
+            hotels.AddRange(await _atalayaMethods.RetrieveHotelMealInfo(atalayaHotels, endpointAtalaya));
+            var endpointResort = _configuration.GetSection("APIS").GetSection("resortAPIMealInfo").Value;
+            hotels.AddRange(await _resortMethods.RetrieveHotelMealInfo(resortHotels, endpointResort));
+            return hotels;
         }
 
     }
