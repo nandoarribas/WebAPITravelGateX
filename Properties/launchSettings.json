@@ -12,7 +12,7 @@
     "IIS Express": {
       "commandName": "IISExpress",
       "launchBrowser": true,
-      "launchUrl": "reservas/hotelinfo",
+      "launchUrl": "reservas/itineraryCancun",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
@@ -20,7 +20,7 @@
     "WebAPITravelGateX": {
       "commandName": "Project",
       "launchBrowser": true,
-      "launchUrl": "reservas/hotelinfo",
+      "launchUrl": "reservas/itineraryCancun",
       "applicationUrl": "https://localhost:5001;http://localhost:5000",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"

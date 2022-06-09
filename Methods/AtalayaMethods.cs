@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net.Http;
 using System.Text.Json;
 using System.Threading.Tasks;
 using WebAPITravelGateX.Model;
@@ -22,7 +21,6 @@ namespace WebAPITravelGateX.Methods
         /// <returns>The updated hotel list</returns>
         public async Task<List<Hotel>> RetrieveHotels(List<Hotel> hotels, string endpoint)
         {
-            var client = new HttpClient();
             var data = await Utils.GetDataFromUrl(endpoint);
 
             foreach (var hotel in JsonSerializer.Deserialize<AtalayaHotels>(data).hotels)
@@ -46,7 +44,6 @@ namespace WebAPITravelGateX.Methods
         /// <returns>The updated hotels list</returns>
         public async Task<List<Hotel>> RetrieveHotelRoomInfo(List<Hotel> hotels, string endpoint)
         {
-            var client = new HttpClient();
             var data = await Utils.GetDataFromUrl(endpoint);
             foreach (var roomType in JsonSerializer.Deserialize<AtalayaRooms>(data).RoomsType)
             {
@@ -72,7 +69,6 @@ namespace WebAPITravelGateX.Methods
         /// <returns>The updated hotels list</returns>
         public async Task<List<Hotel>> RetrieveHotelMealInfo(List<Hotel> hotels, string endpoint)
         {
-            var client = new HttpClient();
             var data = await Utils.GetDataFromUrl(endpoint);
             var hotelsResult = new List<Hotel>();
             var hotelRooms = new Dictionary<string, List<HotelRoomInfo>>();
@@ -129,27 +125,6 @@ namespace WebAPITravelGateX.Methods
             }
 
             return atalayaRoomPriceParsed;
-        }
-
-        private IEnumerable<HotelRoomInfo> FillHotelRooms(IEnumerable<HotelRoomInfo> rooms, IEnumerable<AtalayaMealPlanFare> tarifas, MealPlan mealplan )
-        {
-            var hotelRoomInfoResult = new List<HotelRoomInfo>();
-            foreach (var roomInfo in rooms)
-            {
-                var tarifasTipoHabitacion =
-                    from t in tarifas
-                    where roomInfo.RoomType == t.Room
-                    select new HotelRoomInfo()
-                    {
-                        Name = roomInfo.Name,
-                        RoomType = roomInfo.RoomType,
-                        MealPlan = mealplan,
-                        Price = t.Price
-                    };
-                hotelRoomInfoResult.AddRange(tarifasTipoHabitacion);
-
-            }
-            return hotelRoomInfoResult;
         }
     }
 }

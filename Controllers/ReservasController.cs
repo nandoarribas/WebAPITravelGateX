@@ -1,10 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http;
 using System.Threading.Tasks;
 using WebAPITravelGateX.Methods;
 using WebAPITravelGateX.Model;
@@ -19,6 +16,13 @@ namespace WebAPITravelGateX.Controllers
         private readonly IConfiguration _configuration;
         private readonly AtalayaMethods _atalayaMethods;
         private readonly ResortMethods _resortMethods;
+        #region endpoints
+        private readonly string atalayaAPIHotelInfo;
+        private readonly string atalayaAPIHotelRoomInfo;
+        private readonly string atalayaAPIMealInfo;
+        private readonly string resortAPIHotelInfo;
+        private readonly string resortAPIMealInfo;
+        #endregion
 
         public ReservasController(ILogger<ReservasController> logger, IConfiguration configuration)
         {
@@ -26,47 +30,61 @@ namespace WebAPITravelGateX.Controllers
             _configuration = configuration;
             _atalayaMethods = new AtalayaMethods();
             _resortMethods = new ResortMethods();
+            atalayaAPIHotelInfo = _configuration.GetSection("APIS").GetSection("atalayaAPIHotelInfo").Value;
+            resortAPIHotelInfo = _configuration.GetSection("APIS").GetSection("resortAPIHotelRoomInfo").Value;
+            atalayaAPIHotelRoomInfo = _configuration.GetSection("APIS").GetSection("atalayaAPIRoomInfo").Value;
+            atalayaAPIMealInfo= _configuration.GetSection("APIS").GetSection("atalayaAPIMealInfo").Value;
+            resortAPIMealInfo= _configuration.GetSection("APIS").GetSection("resortAPIMealInfo").Value;
         }
 
-        [HttpGet("hotelInfo")]
-        public async Task<Hotels> GetFullHotelInfo()
+        [HttpGet("hotelList")]
+        public async Task<Hotels> GetHotelList()
         {
             var hotels = new List<Hotel>();
             var atalayaHotels = new List<Hotel>();
             var resortHotels = new List<Hotel>();
-            var endpointAtalaya = _configuration.GetSection("APIS").GetSection("atalayaAPIHotelInfo").Value;
+            
+            atalayaHotels = await _atalayaMethods.RetrieveHotels(atalayaHotels, atalayaAPIHotelInfo);
+            atalayaHotels = (List<Hotel>)await _atalayaMethods.RetrieveHotelRoomInfo(atalayaHotels, atalayaAPIHotelRoomInfo);
 
-            atalayaHotels = await _atalayaMethods.RetrieveHotels(atalayaHotels, endpointAtalaya);
-            atalayaHotels = (List<Hotel>)await GetHotelRoomInfo(atalayaHotels);
-            var endpointResort = _configuration.GetSection("APIS").GetSection("resortAPIHotelRoomInfo").Value;
-            resortHotels = await _resortMethods.RetrieveHotels(resortHotels, endpointResort);
-            //Until we dont have hotels set we cant get mealplan
-            hotels = (List<Hotel>)await GetHotelMealPlanInfo(atalayaHotels, resortHotels);
+            resortHotels = await _resortMethods.RetrieveHotels(resortHotels, resortAPIHotelInfo);
+
+            hotels = (List<Hotel>)await UpdateHotelMealPlanInfo(atalayaHotels, resortHotels);
             return new Hotels()
             {
                 hotels = hotels
             };
         }
 
-        private async Task<IEnumerable<Hotel>> GetHotelRoomInfo(List<Hotel> atalayaHotels)
+        [HttpGet("itineraryCancun")]
+        public async Task<Itineraries> GetItinerary()
         {
-            var hotelRoomInfo = new List<Hotel>();
-            var endpointAtalaya = _configuration.GetSection("APIS").GetSection("atalayaAPIRoomInfo").Value;
+            var hotels = await GetHotelList();
+            var itin = new Itineraries();
+            var itineraries = new List<Itinerary>();
+            itineraries.Add(new Itinerary()
+            {
+                Hoteles = ((List<Hotel>)(hotels.hotels)).GetRange(0, 1)
+            });
+            itineraries.Add(new Itinerary()
+            {
+                Hoteles = ((List<Hotel>)(hotels.hotels)).GetRange(2, 1)
+            });
+            itin.ItinerariesList = itineraries;
 
-            hotelRoomInfo = await _atalayaMethods.RetrieveHotelRoomInfo(atalayaHotels, endpointAtalaya);
-            return hotelRoomInfo;
+            return itin;
         }
 
-        private async Task<IEnumerable<Hotel>> GetHotelMealPlanInfo(List<Hotel> atalayaHotels, List<Hotel> resortHotels)
+        #region auxiliary methods
+        private async Task<IEnumerable<Hotel>> UpdateHotelMealPlanInfo(List<Hotel> atalayaHotels, List<Hotel> resortHotels)
         {
             var hotels = new List<Hotel>();
-            var endpointAtalaya = _configuration.GetSection("APIS").GetSection("atalayaAPIMealInfo").Value;
+            hotels.AddRange(await _atalayaMethods.RetrieveHotelMealInfo(atalayaHotels, atalayaAPIMealInfo));
 
-            hotels.AddRange(await _atalayaMethods.RetrieveHotelMealInfo(atalayaHotels, endpointAtalaya));
-            var endpointResort = _configuration.GetSection("APIS").GetSection("resortAPIMealInfo").Value;
-            hotels.AddRange(await _resortMethods.RetrieveHotelMealInfo(resortHotels, endpointResort));
+            hotels.AddRange(await _resortMethods.RetrieveHotelMealInfo(resortHotels, resortAPIMealInfo));
             return hotels;
         }
+        #endregion
 
     }
 }

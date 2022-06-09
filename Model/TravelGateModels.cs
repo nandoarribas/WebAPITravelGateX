@@ -17,7 +17,11 @@ namespace WebAPITravelGateX.Model
 
         public string City { get; set; }
 
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public IEnumerable<HotelRoomInfo> Rooms { get; set; }
+
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+        public HotelRoomInfo Room { get; set; }
     }
 
     public class HotelRoomInfo
@@ -30,5 +34,17 @@ namespace WebAPITravelGateX.Model
         [JsonPropertyName("meal_plan")]
         public MealPlan MealPlan { get; set; }
         public decimal Price { get; set; }
+
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+        public int Nights { get; set; }
+    }
+
+    public class Itineraries
+    {
+        public IEnumerable<Itinerary> ItinerariesList { get; set; }
+    }
+    public class Itinerary
+    {
+        public IEnumerable<Hotel> Hoteles { get; set; }
     }
 }
