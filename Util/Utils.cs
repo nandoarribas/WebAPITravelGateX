@@ -16,5 +16,6 @@ namespace WebAPITravelGateX.Util
             string responseResortBody = await responseResort.Content.ReadAsStringAsync();
             return responseResortBody;
         }
+
     }
 }

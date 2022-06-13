@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using WebAPITravelGateX.Methods;
 using WebAPITravelGateX.Model;
+using WebAPITravelGateX.Util;
 
 namespace WebAPITravelGateX.Controllers
 {
@@ -16,6 +17,7 @@ namespace WebAPITravelGateX.Controllers
         private readonly IConfiguration _configuration;
         private readonly AtalayaMethods _atalayaMethods;
         private readonly ResortMethods _resortMethods;
+        private readonly TravelGateMethods _travelGateMethods;
         #region endpoints
         private readonly string atalayaAPIHotelInfo;
         private readonly string atalayaAPIHotelRoomInfo;
@@ -30,6 +32,7 @@ namespace WebAPITravelGateX.Controllers
             _configuration = configuration;
             _atalayaMethods = new AtalayaMethods();
             _resortMethods = new ResortMethods();
+            _travelGateMethods = new TravelGateMethods();
             atalayaAPIHotelInfo = _configuration.GetSection("APIS").GetSection("atalayaAPIHotelInfo").Value;
             resortAPIHotelInfo = _configuration.GetSection("APIS").GetSection("resortAPIHotelRoomInfo").Value;
             atalayaAPIHotelRoomInfo = _configuration.GetSection("APIS").GetSection("atalayaAPIRoomInfo").Value;
@@ -45,8 +48,7 @@ namespace WebAPITravelGateX.Controllers
             var resortHotels = new List<Hotel>();
             
             atalayaHotels = await _atalayaMethods.RetrieveHotels(atalayaHotels, atalayaAPIHotelInfo);
-            atalayaHotels = (List<Hotel>)await _atalayaMethods.RetrieveHotelRoomInfo(atalayaHotels, atalayaAPIHotelRoomInfo);
-
+        
             resortHotels = await _resortMethods.RetrieveHotels(resortHotels, resortAPIHotelInfo);
 
             hotels = (List<Hotel>)await UpdateHotelMealPlanInfo(atalayaHotels, resortHotels);
@@ -56,30 +58,27 @@ namespace WebAPITravelGateX.Controllers
             };
         }
 
-        [HttpGet("itineraryCancun")]
-        public async Task<Itineraries> GetItinerary()
+        //changed to post to include am input param for the itinerary
+        //Destination will receive a list of paris destination-night-meal sepparated by _ If meal is empty we consider all meal plans
+        [HttpPost("itineraryCancun")]
+        public async Task<Itineraries> GetItinerary([FromBody] ItineraryInfo itineraryParams)
         {
             var hotels = await GetHotelList();
-            var itin = new Itineraries();
-            var itineraries = new List<Itinerary>();
-            itineraries.Add(new Itinerary()
-            {
-                Hoteles = ((List<Hotel>)(hotels.hotels)).GetRange(0, 1)
-            });
-            itineraries.Add(new Itinerary()
-            {
-                Hoteles = ((List<Hotel>)(hotels.hotels)).GetRange(2, 1)
-            });
-            itin.ItinerariesList = itineraries;
 
-            return itin;
+            var hotelsSelection = _travelGateMethods.RetrieveHotelsByCondition(hotels.hotels, itineraryParams.DestinationNigths);
+
+            var itinerariesResult =  _travelGateMethods.CalculateOptions(hotelsSelection, itineraryParams.Budget);
+            var result = _travelGateMethods.FillItinerary(hotels.hotels, itinerariesResult);
+            return result;
         }
 
         #region auxiliary methods
         private async Task<IEnumerable<Hotel>> UpdateHotelMealPlanInfo(List<Hotel> atalayaHotels, List<Hotel> resortHotels)
         {
             var hotels = new List<Hotel>();
-            hotels.AddRange(await _atalayaMethods.RetrieveHotelMealInfo(atalayaHotels, atalayaAPIMealInfo));
+            var roomsInfo  = await _atalayaMethods.RetrieveHotelRoomInfo(atalayaHotels, atalayaAPIHotelRoomInfo);
+            //For filling the room info for AtalayaHotel we use the roomInfo and mealInfo together, to fill all the fields.
+            hotels.AddRange(await _atalayaMethods.RetrieveHotelMealInfo(atalayaHotels, roomsInfo, atalayaAPIMealInfo));
 
             hotels.AddRange(await _resortMethods.RetrieveHotelMealInfo(resortHotels, resortAPIMealInfo));
             return hotels;

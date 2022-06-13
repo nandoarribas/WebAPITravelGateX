@@ -17,10 +17,10 @@ namespace WebAPITravelGateX.Model
 
         public string City { get; set; }
 
-        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
         public IEnumerable<HotelRoomInfo> Rooms { get; set; }
 
-        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
         public HotelRoomInfo Room { get; set; }
     }
 
@@ -35,8 +35,11 @@ namespace WebAPITravelGateX.Model
         public MealPlan MealPlan { get; set; }
         public decimal Price { get; set; }
 
-        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
         public int Nights { get; set; }
+        //Useful in itinerary to retrieve hotelcode
+        [JsonIgnore]
+        public string HotelCode { get; set; }
     }
 
     public class Itineraries
@@ -45,6 +48,22 @@ namespace WebAPITravelGateX.Model
     }
     public class Itinerary
     {
-        public IEnumerable<Hotel> Hoteles { get; set; }
+        public IEnumerable<Hotel> Hotels { get; set; }
+    }
+
+    public class ItineraryInfo
+    {
+        public int Budget { get; set; }
+        /// <summary>
+        /// To include all the destinations for your itinerary with some options
+        /// </summary>
+        public List<Destinations> DestinationNigths { get; set; }
+    }
+
+    public class Destinations
+    {
+        public string Destination { get; set; }
+        public int Nights { get; set; }
+        public string MealPlan { get; set; }
     }
 }

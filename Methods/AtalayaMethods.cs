@@ -42,23 +42,26 @@ namespace WebAPITravelGateX.Methods
         /// <param name="hotels">Previous existing hotels</param>
         /// <param name="endpoint">Atalaya endpoint to retrieve info</param>
         /// <returns>The updated hotels list</returns>
-        public async Task<List<Hotel>> RetrieveHotelRoomInfo(List<Hotel> hotels, string endpoint)
+        public async Task<IEnumerable<AtalayaRoom>> RetrieveHotelRoomInfo(List<Hotel> hotels, string endpoint)
         {
             var data = await Utils.GetDataFromUrl(endpoint);
+            var hotelRoomsDictionary = new Dictionary<string, Dictionary<string, string>>();
             foreach (var roomType in JsonSerializer.Deserialize<AtalayaRooms>(data).RoomsType)
             {
                 var addHotels = from h in hotels where roomType.Hotels.Contains(h.Code)
                                 select h;
-                foreach(var hotel in addHotels)
+                /*
+                 * foreach(var hotel in addHotels)
                 {
                     hotel.Rooms = hotel.Rooms.Append(new HotelRoomInfo()
                     {
                         Name= roomType.Name,
                         RoomType = roomType.Code
                     });
-                }
+                }*/
             }
-            return hotels;
+            //return hotels;
+            return JsonSerializer.Deserialize<AtalayaRooms>(data).RoomsType;
         }
 
         /// <summary>
@@ -67,11 +70,13 @@ namespace WebAPITravelGateX.Methods
         /// <param name="hotels">The previous hotels list</param>
         /// <param name="endpoint">Atalaya endpoint to retrieve info</param>
         /// <returns>The updated hotels list</returns>
-        public async Task<List<Hotel>> RetrieveHotelMealInfo(List<Hotel> hotels, string endpoint)
+        public async Task<List<Hotel>> RetrieveHotelMealInfo(List<Hotel> hotels, IEnumerable<AtalayaRoom> roomsInfo, string endpoint)
         {
+            
             var data = await Utils.GetDataFromUrl(endpoint);
             var hotelsResult = new List<Hotel>();
             var hotelRooms = new Dictionary<string, List<HotelRoomInfo>>();
+
             foreach (var roomsMeal in JsonSerializer.Deserialize<AtalayaMealPlans>(data).Meals)
             {
                 var mealPlan = roomsMeal.Code;
@@ -85,7 +90,7 @@ namespace WebAPITravelGateX.Methods
                     select new HotelRoomInfo()
                     {
                         MealPlan = mealPlan,
-                        Name = hotelCode,
+                        Name = roomsInfo.Where(x=> x.Code == mpf.Room && x.Hotels.Contains(hotelCode)).Select(x=>x.Name).FirstOrDefault(),
                         Price = mpf.Price,
                         RoomType = mpf.Room
                     }).ToList();
