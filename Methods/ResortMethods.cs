@@ -9,6 +9,12 @@ namespace WebAPITravelGateX.Methods
 {
     public class ResortMethods
     {
+        /// <summary>
+        /// Get the list of the hotels available for resort hotels
+        /// </summary>
+        /// <param name="hotels">The previous list with hotels retrieved</param>
+        /// <param name="endpoint">The endpoint to get the data into the resort API</param>
+        /// <returns>The updated list of hotels</returns>
         public async Task<List<Hotel>> RetrieveHotels(List<Hotel> hotels, string endpoint)
         {
             var data = await Utils.GetDataFromUrl(endpoint);
@@ -26,6 +32,12 @@ namespace WebAPITravelGateX.Methods
             return hotels;
         }
 
+        /// <summary>
+        /// Get all the hotels with the meal plan filled in
+        /// </summary>
+        /// <param name="hotels">The previous hotel list without meal plan</param>
+        /// <param name="endpoint">The endpoint to retrieve meal plans from resort API</param>
+        /// <returns>The updated list of hotels with meal plans</returns>
         public async Task<List<Hotel>> RetrieveHotelMealInfo(List<Hotel> hotels, string endpoint)
         {
             var data = await Utils.GetDataFromUrl(endpoint);

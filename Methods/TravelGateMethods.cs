@@ -72,6 +72,12 @@ namespace WebAPITravelGateX.Methods
             return hotelRoomsResult;
         }
 
+        /// <summary>
+        /// Create the json file with all itineraries
+        /// </summary>
+        /// <param name="hotels">The list with all hotels</param>
+        /// <param name="hotelItineraries">The list with all combinations of room info found</param>
+        /// <returns>The itinearies</returns>
         public Itineraries FillItinerary(IEnumerable<Hotel> hotels, IEnumerable<IEnumerable<HotelRoomInfo>> hotelItineraries)
         {
             var result = new Itineraries();

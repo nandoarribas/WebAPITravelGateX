@@ -45,22 +45,6 @@ namespace WebAPITravelGateX.Methods
         public async Task<IEnumerable<AtalayaRoom>> RetrieveHotelRoomInfo(List<Hotel> hotels, string endpoint)
         {
             var data = await Utils.GetDataFromUrl(endpoint);
-            var hotelRoomsDictionary = new Dictionary<string, Dictionary<string, string>>();
-            foreach (var roomType in JsonSerializer.Deserialize<AtalayaRooms>(data).RoomsType)
-            {
-                var addHotels = from h in hotels where roomType.Hotels.Contains(h.Code)
-                                select h;
-                /*
-                 * foreach(var hotel in addHotels)
-                {
-                    hotel.Rooms = hotel.Rooms.Append(new HotelRoomInfo()
-                    {
-                        Name= roomType.Name,
-                        RoomType = roomType.Code
-                    });
-                }*/
-            }
-            //return hotels;
             return JsonSerializer.Deserialize<AtalayaRooms>(data).RoomsType;
         }
 
@@ -68,6 +52,7 @@ namespace WebAPITravelGateX.Methods
         /// Get all atalaya hotels with meal plan info filled in
         /// </summary>
         /// <param name="hotels">The previous hotels list</param>
+        /// <param name="roomsInfo">The room info retrieved from the rooms endpoint</param>
         /// <param name="endpoint">Atalaya endpoint to retrieve info</param>
         /// <returns>The updated hotels list</returns>
         public async Task<List<Hotel>> RetrieveHotelMealInfo(List<Hotel> hotels, IEnumerable<AtalayaRoom> roomsInfo, string endpoint)

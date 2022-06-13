@@ -8,6 +8,11 @@ namespace WebAPITravelGateX.Util
 {
     public static class Utils
     {
+        /// <summary>
+        /// Retrieve the info from the API given
+        /// </summary>
+        /// <param name="endpointResort">API to be queried</param>
+        /// <returns>The json data </returns>
         public static async Task<string> GetDataFromUrl(string endpointResort)
         {
             HttpClient client = new HttpClient();

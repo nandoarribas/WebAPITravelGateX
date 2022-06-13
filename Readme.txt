@@ -40,7 +40,7 @@ Mejoras
     Para los hoteles de Resort, con el segundo endpoint de la api es más sencillo este punto.
     *Nota: Dado que en este ejercicio los nodos de nombre de hotel son dinámicos, y no fijos ("acs","hrm"...), podría haber hecho uso de un Converter, 
     una solución que vi en internet que es muy buena para este tipo de problemas, pero finalmente por falta de tiempo decidí mantener mi solución 
-    inicial, en la cual manipulo el nodo a mano y saco el nombre y los hijos (Sobre la línea 83 de AtalayaMethods)
+    inicial, en la cual manipulo el nodo a mano y saco el nombre y los hijos (Sobre la línea 83 de AtalayaMethodsal ca)
 
     Para el ejercicio 2, se aprovecha la funcionalidad ya creada del ejercicio 1 para recuperar todos los hoteles y aplicarles el filtro de condiciones 
     recibidos en el json (como el del ejemplo). Una vez realizados los filtros de ciudad, y tipo de plan de comidas, se crean instancias de habitaciones 

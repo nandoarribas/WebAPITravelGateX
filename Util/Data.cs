@@ -2,6 +2,9 @@
 
 namespace WebAPITravelGateX.Util
 {
+    /// <summary>
+    /// Represent all the available meal plans
+    /// </summary>
     [Flags]
     public enum MealPlan
     {
@@ -11,6 +14,9 @@ namespace WebAPITravelGateX.Util
         pc=3
     }
 
+    /// <summary>
+    /// Represent the type of rooms
+    /// </summary>
     [Flags]
     public enum RoomType
     {
@@ -18,6 +24,9 @@ namespace WebAPITravelGateX.Util
         suite
     }
 
+    /// <summary>
+    /// Represent the type of room for resort hotels
+    /// </summary>
     [Flags]
     public enum ResortRoomType
     {

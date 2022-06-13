@@ -4,11 +4,20 @@ using WebAPITravelGateX.Util;
 
 namespace WebAPITravelGateX.Model
 {
+    /// <summary>
+    /// Represent the main node wrom the resort hotels api
+    /// </summary>
     public class ResortHotels
     {
+        /// <summary>
+        /// The list of the hotels
+        /// </summary>
         public List<ResortHotel> hotels { get; set; }
     }
 
+    /// <summary>
+    /// Represent the atalaya hotel
+    /// </summary>
     public class ResortHotel
     {
         [JsonPropertyName("name")]

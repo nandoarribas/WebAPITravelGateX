@@ -11,9 +11,9 @@ namespace WebAPITravelGateX.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class ReservasController : ControllerBase
+    public class BookingController : ControllerBase
     {
-        private readonly ILogger<ReservasController> _logger;
+        private readonly ILogger<BookingController> _logger;
         private readonly IConfiguration _configuration;
         private readonly AtalayaMethods _atalayaMethods;
         private readonly ResortMethods _resortMethods;
@@ -26,7 +26,12 @@ namespace WebAPITravelGateX.Controllers
         private readonly string resortAPIMealInfo;
         #endregion
 
-        public ReservasController(ILogger<ReservasController> logger, IConfiguration configuration)
+        /// <summary>
+        /// Create an instance of BookingController 
+        /// </summary>
+        /// <param name="logger">To include logs if required</param>
+        /// <param name="configuration">To retrieve the information from appsettings.json file</param>
+        public BookingController(ILogger<BookingController> logger, IConfiguration configuration)
         {
             _logger = logger;
             _configuration = configuration;
@@ -40,6 +45,11 @@ namespace WebAPITravelGateX.Controllers
             resortAPIMealInfo= _configuration.GetSection("APIS").GetSection("resortAPIMealInfo").Value;
         }
 
+
+        /// <summary>
+        /// Get all the available hotels with their information of rooms, meal plans...
+        /// </summary>
+        /// <returns>A list of hotels</returns>
         [HttpGet("hotelList")]
         public async Task<Hotels> GetHotelList()
         {
@@ -58,8 +68,11 @@ namespace WebAPITravelGateX.Controllers
             };
         }
 
-        //changed to post to include am input param for the itinerary
-        //Destination will receive a list of paris destination-night-meal sepparated by _ If meal is empty we consider all meal plans
+        /// <summary>
+        /// Get all available itineraries that fits with the itinerary info param given
+        /// </summary>
+        /// <param name="itineraryParams">Represents an object with the budget and a list of destination cities with their meal plans and nights</param>
+        /// <returns>The Itineraries</returns>
         [HttpPost("itineraryCancun")]
         public async Task<Itineraries> GetItinerary([FromBody] ItineraryInfo itineraryParams)
         {
