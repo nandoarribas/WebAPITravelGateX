@@ -11,7 +11,7 @@ namespace WebAPITravelGateX.Methods
     /// <summary>
     /// Class with all methods used in controller to retrieve info from atalaya API
     /// </summary>
-    public class AtalayaMethods
+    public class AtalayaMethods : IHotelProvider
     {
         /// <summary>
         /// Get all the atalaya hotels
@@ -57,7 +57,7 @@ namespace WebAPITravelGateX.Methods
         /// <returns>The updated hotels list</returns>
         public async Task<List<Hotel>> RetrieveHotelMealInfo(List<Hotel> hotels, IEnumerable<AtalayaRoom> roomsInfo, string endpoint)
         {
-            
+
             var data = await Utils.GetDataFromUrl(endpoint);
             var hotelsResult = new List<Hotel>();
             var hotelRooms = new Dictionary<string, List<HotelRoomInfo>>();
@@ -66,36 +66,36 @@ namespace WebAPITravelGateX.Methods
             {
                 var mealPlan = roomsMeal.Code;
                 var roomHotels = roomsMeal.Hotel.EnumerateObject();
-                foreach(var hotel in roomHotels)
+                foreach (var hotel in roomHotels)
                 {
                     var hotelCode = hotel.Name;
                     var roomFares = hotel.Value.EnumerateArray().ToList();
                     List<AtalayaMealPlanFare> atalayaRoomFareParsed = CreateMealPlanFares(roomFares);
                     var roomsInfoFilled = (from mpf in atalayaRoomFareParsed
-                    select new HotelRoomInfo()
-                    {
-                        MealPlan = mealPlan,
-                        Name = roomsInfo.Where(x=> x.Code == mpf.Room && x.Hotels.Contains(hotelCode)).Select(x=>x.Name).FirstOrDefault(),
-                        Price = mpf.Price,
-                        RoomType = mpf.Room
-                    }).ToList();
+                                           select new HotelRoomInfo()
+                                           {
+                                               MealPlan = mealPlan,
+                                               Name = roomsInfo.Where(x => x.Code == mpf.Room && x.Hotels.Contains(hotelCode)).Select(x => x.Name).FirstOrDefault(),
+                                               Price = mpf.Price,
+                                               RoomType = mpf.Room
+                                           }).ToList();
 
                     if (!hotelRooms.ContainsKey(hotelCode))
                     {
                         hotelRooms.Add(hotelCode, new List<HotelRoomInfo>());
                     }
                     hotelRooms.Add(hotelCode, roomsInfoFilled);
-                    
+
                 }
             }
             hotelsResult = (from h in hotels
-            select new Hotel()
-            {
-                City = h.City,
-                Code = h.Code,
-                Name = h.Name,
-                Rooms = hotelRooms[h.Code]
-            }).ToList();
+                            select new Hotel()
+                            {
+                                City = h.City,
+                                Code = h.Code,
+                                Name = h.Name,
+                                Rooms = hotelRooms[h.Code]
+                            }).ToList();
 
             return hotelsResult;
         }

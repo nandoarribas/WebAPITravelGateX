@@ -7,7 +7,7 @@ using WebAPITravelGateX.Util;
 
 namespace WebAPITravelGateX.Methods
 {
-    public class ResortMethods
+    public class ResortMethods: IHotelProvider
     {
         /// <summary>
         /// Get the list of the hotels available for resort hotels
