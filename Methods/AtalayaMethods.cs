@@ -80,14 +80,12 @@ namespace WebAPITravelGateX.Methods
                         RoomType = mpf.Room
                     }).ToList();
 
-                    if(hotelRooms.ContainsKey(hotelCode))
+                    if (!hotelRooms.ContainsKey(hotelCode))
                     {
-                        hotelRooms[hotelCode].AddRange(roomsInfoFilled);
+                        hotelRooms.Add(hotelCode, new List<HotelRoomInfo>());
                     }
-                    else
-                    {
-                        hotelRooms.Add(hotelCode, roomsInfoFilled); 
-                    }
+                    hotelRooms.Add(hotelCode, roomsInfoFilled);
+                    
                 }
             }
             hotelsResult = (from h in hotels

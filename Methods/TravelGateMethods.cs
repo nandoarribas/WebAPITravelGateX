@@ -29,14 +29,12 @@ namespace WebAPITravelGateX.Methods
                                       HotelCode = hotelResult.Code //Useful to build the json output 
                                   }).ToList();
 
-                    if (filteredCityHotel.ContainsKey(city.Destination))
+                    if (!filteredCityHotel.ContainsKey(city.Destination))
                     {
-                        filteredCityHotel[city.Destination].AddRange(filteredRooms);
+                        filteredCityHotel.Add(city.Destination, new List<HotelRoomInfo> ());
                     }
-                    else
-                    {
-                        filteredCityHotel.Add(city.Destination, (List<HotelRoomInfo>)filteredRooms);
-                    }
+                    filteredCityHotel.Add(city.Destination,filteredRooms);
+                   
                 }
             }
             return filteredCityHotel;
