@@ -7,6 +7,12 @@ namespace WebAPITravelGateX.Methods
 {
     public class TravelGateMethods
     {
+        /// <summary>
+        /// Get all the rooms associated with each destination that fits with the destinations list
+        /// </summary>
+        /// <param name="hotels">Initial hotel list</param>
+        /// <param name="destinations">Destination object with the conditions</param>
+        /// <returns>A dictionary with the city and the rooms </returns>
         public Dictionary<string, List<HotelRoomInfo>> RetrieveHotelsByCondition(IEnumerable<Hotel> hotels, List<Destinations> destinations)
         {
             var filteredCityHotel = new Dictionary<string, List<HotelRoomInfo>>();
@@ -40,7 +46,12 @@ namespace WebAPITravelGateX.Methods
             return filteredCityHotel;
         }
 
-
+        /// <summary>
+        /// Retrieve all the available hotels combination that fits into the budget
+        /// </summary>
+        /// <param name="hotelsSelection">Dictionary with the city and the rooms available</param>
+        /// <param name="budget">The max amount to be paid for the client</param>
+        /// <returns>A list with the rooms combinations</returns>
         public IEnumerable<IEnumerable<HotelRoomInfo>> CalculateOptions(Dictionary<string, List<HotelRoomInfo>> hotelsSelection, decimal budget)
         {
             //The calculation criteria option depends on the following variables : First Price, Snd RoomType (suite,standard)
