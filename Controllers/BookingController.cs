@@ -89,7 +89,7 @@ namespace WebAPITravelGateX.Controllers
         private async Task<IEnumerable<Hotel>> UpdateHotelMealPlanInfo(List<Hotel> atalayaHotels, List<Hotel> resortHotels)
         {
             var hotels = new List<Hotel>();
-            var roomsInfo  = await _atalayaMethods.RetrieveHotelRoomInfo(atalayaHotels, atalayaAPIHotelRoomInfo);
+            await _atalayaMethods.RetrieveHotelRoomInfo(atalayaHotels, atalayaAPIHotelRoomInfo);
             //For filling the room info for AtalayaHotel we use the roomInfo and mealInfo together, to fill all the fields.
             hotels.AddRange(await _atalayaMethods.RetrieveHotelMealInfo(atalayaHotels, roomsInfo, atalayaAPIMealInfo));
 

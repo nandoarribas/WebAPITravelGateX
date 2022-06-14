@@ -19,6 +19,7 @@ Model
         ejercicios 1 y 2. También podría haberse hecho uso de herencia para estos casos.
 Methods
     Carpeta donde se realizarán todas las operativas que haya que hacer con los modelos (creación, consultas, actualización...)
+    Incluimos una interfaz IHotelProvider con los métodos comunes de AtalayaMethods y ResortMethods (de las APIs de consulta)
     Los métodos públicos serán los que sean llamados desde el Controller
 
 Controller

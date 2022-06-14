@@ -9,5 +9,6 @@ namespace WebAPITravelGateX.Methods
     public interface IHotelProvider
     {
         Task<List<Hotel>> RetrieveHotels(List<Hotel> hotels, string endpoint);
+        Task<List<Hotel>> RetrieveHotelMealInfo(List<Hotel> hotels, string endpoint);
     }
 }

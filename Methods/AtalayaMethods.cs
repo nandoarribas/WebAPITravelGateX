@@ -13,6 +13,18 @@ namespace WebAPITravelGateX.Methods
     /// </summary>
     public class AtalayaMethods : IHotelProvider
     {
+        private IEnumerable<AtalayaRoom> atalayaRooms;
+
+        /// <summary>
+        /// Constructor for atalaya methods.
+        /// We will initialize on it the list of the rooms
+        /// </summary>
+        public AtalayaMethods()
+        {
+            this.atalayaRooms = new List<AtalayaRoom>();
+        }
+
+
         /// <summary>
         /// Get all the atalaya hotels
         /// </summary>
@@ -45,17 +57,17 @@ namespace WebAPITravelGateX.Methods
         public async Task<IEnumerable<AtalayaRoom>> RetrieveHotelRoomInfo(List<Hotel> hotels, string endpoint)
         {
             var data = await Utils.GetDataFromUrl(endpoint);
-            return JsonSerializer.Deserialize<AtalayaRooms>(data).RoomsType;
+            atalayaRooms = JsonSerializer.Deserialize<AtalayaRooms>(data).RoomsType;
+            return atalayaRooms;
         }
 
         /// <summary>
         /// Get all atalaya hotels with meal plan info filled in
         /// </summary>
         /// <param name="hotels">The previous hotels list</param>
-        /// <param name="roomsInfo">The room info retrieved from the rooms endpoint</param>
         /// <param name="endpoint">Atalaya endpoint to retrieve info</param>
         /// <returns>The updated hotels list</returns>
-        public async Task<List<Hotel>> RetrieveHotelMealInfo(List<Hotel> hotels, IEnumerable<AtalayaRoom> roomsInfo, string endpoint)
+        public async Task<List<Hotel>> RetrieveHotelMealInfo(List<Hotel> hotels, string endpoint)
         {
 
             var data = await Utils.GetDataFromUrl(endpoint);
@@ -75,7 +87,7 @@ namespace WebAPITravelGateX.Methods
                                            select new HotelRoomInfo()
                                            {
                                                MealPlan = mealPlan,
-                                               Name = roomsInfo.Where(x => x.Code == mpf.Room && x.Hotels.Contains(hotelCode)).Select(x => x.Name).FirstOrDefault(),
+                                               Name = atalayaRooms.Where(x => x.Code == mpf.Room && x.Hotels.Contains(hotelCode)).Select(x => x.Name).FirstOrDefault(),
                                                Price = mpf.Price,
                                                RoomType = mpf.Room
                                            }).ToList();
